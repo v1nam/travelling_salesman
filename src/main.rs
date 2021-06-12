@@ -13,7 +13,7 @@ use sfml::{
 fn main() {
     let mut window = RenderWindow::new(
         (950, 600),
-        "Custom shape",
+        "Travelling Salesman",
         Style::CLOSE,
         &Default::default(),
     );
