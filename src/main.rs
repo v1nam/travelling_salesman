@@ -56,7 +56,9 @@ async fn main() {
             nodes = Vec::new();
             edges = Vec::new();
             colony = Colony::default(vec![(0, 0)]);
-        } else if is_key_pressed(KeyCode::U) || (is_key_pressed(KeyCode::Z) && is_key_down(KeyCode::LeftControl)) {
+        } else if is_key_pressed(KeyCode::U)
+            || (is_key_pressed(KeyCode::Z) && is_key_down(KeyCode::LeftControl))
+        {
             if !nodes.is_empty() {
                 nodes.pop();
             }
@@ -93,6 +95,14 @@ async fn main() {
             &format!("Shortest Distance: {}px", colony.shortest_distance as u32),
             10.0,
             50.0,
+            25.0,
+            Color::from_rgba(247, 244, 243, 180),
+        );
+
+        draw_text(
+            &format!("Nodes: {}", nodes.len()),
+            10.0,
+            80.0,
             25.0,
             Color::from_rgba(247, 244, 243, 180),
         );
