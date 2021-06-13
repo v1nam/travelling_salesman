@@ -157,10 +157,7 @@ impl Colony {
             *v *= 1.0 - self.pheromone_evaporation;
         }
         for (k, v) in self.ant_pheromone_map.iter() {
-            match self.pheromone_map.get(k) {
-                Some(x) => self.pheromone_map.insert(*k, x + *v),
-                None => self.pheromone_map.insert(*k, *v),
-            };
+            self.pheromone_map.entry(*k).and_modify(|x| { *x += v }).or_insert(*v);
         }
     }
     fn populate_ant_pheromone(&mut self, ant: &usize) {
