@@ -30,7 +30,7 @@ async fn main() {
             colony.mainloop();
             i += 1;
         } else {
-            if is_key_pressed(KeyCode::Space) {
+            if is_key_pressed(KeyCode::Space) && nodes.len() > 0 {
                 start = true;
                 colony = Colony::default(nodes.clone());
                 edges = Vec::new();
