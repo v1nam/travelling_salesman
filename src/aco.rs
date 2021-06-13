@@ -32,13 +32,13 @@ impl Ant {
             route: Vec::new(),
         }
     }
-    fn run(&mut self, rng: &mut rand::rngs::ThreadRng, nodes: &Vec<(u32, u32)>) {
-        while self.allowed.len() > 0 {
+    fn run(&mut self, rng: &mut rand::rngs::ThreadRng, nodes: &[(u32, u32)]) {
+        while !self.allowed.is_empty() {
             let next = self.decide(rng, nodes);
             self.move_(next, nodes);
         }
     }
-    fn decide(&self, rng: &mut rand::rngs::ThreadRng, nodes: &Vec<(u32, u32)>) -> u32 {
+    fn decide(&self, rng: &mut rand::rngs::ThreadRng, nodes: &[(u32, u32)]) -> u32 {
         if self.first_round {
             return *self.allowed.choose(rng).unwrap();
         }
@@ -71,16 +71,16 @@ impl Ant {
             }
             upto += weight;
         }
-        return 0;
+        0
     }
-    fn move_(&mut self, end: u32, nodes: &Vec<(u32, u32)>) {
+    fn move_(&mut self, end: u32, nodes: &[(u32, u32)]) {
         let val = self.allowed.iter().position(|x| x == &end).unwrap();
         self.allowed.remove(val);
         self.route.push(end);
         self.distance_travelled += self.distance(&self.location, &end, nodes);
         self.location = end;
     }
-    fn distance(&self, p1: &u32, p2: &u32, nodes: &Vec<(u32, u32)>) -> f32 {
+    fn distance(&self, p1: &u32, p2: &u32, nodes: &[(u32, u32)]) -> f32 {
         let p1 = *p1 as usize;
         let p2 = *p2 as usize;
         (((nodes[p2].0 as i32 - nodes[p1].0 as i32).pow(2)
@@ -125,7 +125,7 @@ impl Colony {
             first_round: true,
         };
         colony.init_ants();
-        return colony;
+        colony
     }
     pub fn mainloop(&mut self) {
         let mut rng = thread_rng();
