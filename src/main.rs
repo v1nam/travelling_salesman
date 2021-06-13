@@ -14,9 +14,8 @@ async fn main() {
         clear_background(Color::from_rgba(30, 36, 38, 255));
 
         if start {
-            if i >= colony.iterations {
-                start = false;
-                i = 0;
+            if colony.shortest_path.len() > 0 {
+                edges = Vec::new();
                 let x = colony.shortest_path.len() - 1;
                 for j in 0..x {
                     let p1 = nodes[colony.shortest_path[j] as usize];
@@ -27,8 +26,13 @@ async fn main() {
                 let p2 = nodes[0];
                 edges.push((p1.0 as f32, p1.1 as f32, p2.0 as f32, p2.1 as f32));
             }
+
             colony.mainloop();
             i += 1;
+            if i >= colony.iterations {
+                start = false;
+                i = 0;
+            }
         } else {
             if is_key_pressed(KeyCode::Space) && nodes.len() > 0 {
                 start = true;
