@@ -98,7 +98,7 @@ pub struct Colony {
     pheromone_evaporation: f32,
     pheromone_value: f32,
     pub iterations: u32,
-    shortest_distance: f32,
+    pub shortest_distance: f32,
     pub shortest_path: Vec<u32>,
     ants: Vec<Ant>,
     pheromone_map: HashMap<(u32, u32), f32>,
@@ -157,7 +157,10 @@ impl Colony {
             *v *= 1.0 - self.pheromone_evaporation;
         }
         for (k, v) in self.ant_pheromone_map.iter() {
-            self.pheromone_map.entry(*k).and_modify(|x| { *x += v }).or_insert(*v);
+            self.pheromone_map
+                .entry(*k)
+                .and_modify(|x| *x += v)
+                .or_insert(*v);
         }
     }
     fn populate_ant_pheromone(&mut self, ant: &usize) {
