@@ -3,7 +3,16 @@ mod aco;
 
 use aco::Colony;
 
-#[macroquad::main("Travelling Salesman")]
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "Travelling Salesman".to_owned(),
+        window_width: 1000,
+        window_height: 700,
+        ..Default::default()
+    }
+}
+
+#[macroquad::main(window_conf)]
 async fn main() {
     let mut nodes: Vec<(u32, u32)> = Vec::new();
     let mut i = 0;
@@ -34,9 +43,9 @@ async fn main() {
                 i = 0;
             }
         } else if is_key_pressed(KeyCode::Space) && !nodes.is_empty() {
-                start = true;
-                colony = Colony::default(nodes.clone());
-                edges = Vec::new();
+            start = true;
+            colony = Colony::default(nodes.clone());
+            edges = Vec::new();
         } else if is_mouse_button_pressed(MouseButton::Left) {
             let pos = mouse_position();
             let pos = (pos.0 as u32, pos.1 as u32);
@@ -46,6 +55,11 @@ async fn main() {
         } else if is_key_pressed(KeyCode::C) {
             nodes = Vec::new();
             edges = Vec::new();
+            colony = Colony::default(vec![(0, 0)]);
+        } else if is_key_pressed(KeyCode::U) || (is_key_pressed(KeyCode::Z) && is_key_down(KeyCode::LeftControl)) {
+            if !nodes.is_empty() {
+                nodes.pop();
+            }
         }
 
         for node_pos in &nodes {
@@ -69,9 +83,17 @@ async fn main() {
 
         draw_text(
             if start { "RUNNING" } else { "PAUSED" },
+            10.0,
             20.0,
-            20.0,
-            30.0,
+            25.0,
+            Color::from_rgba(247, 244, 243, 180),
+        );
+
+        draw_text(
+            &format!("Shortest Distance: {}px", colony.shortest_distance as u32),
+            10.0,
+            50.0,
+            25.0,
             Color::from_rgba(247, 244, 243, 180),
         );
 
