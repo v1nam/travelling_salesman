@@ -14,7 +14,7 @@ async fn main() {
         clear_background(Color::from_rgba(30, 36, 38, 255));
 
         if start {
-            if colony.shortest_path.len() > 0 {
+            if !colony.shortest_path.is_empty() {
                 edges = Vec::new();
                 let x = colony.shortest_path.len() - 1;
                 for j in 0..x {
@@ -33,18 +33,16 @@ async fn main() {
                 start = false;
                 i = 0;
             }
-        } else {
-            if is_key_pressed(KeyCode::Space) && nodes.len() > 0 {
+        } else if is_key_pressed(KeyCode::Space) && !nodes.is_empty() {
                 start = true;
                 colony = Colony::default(nodes.clone());
                 edges = Vec::new();
-            } else if is_mouse_button_pressed(MouseButton::Left) {
-                let pos = mouse_position();
-                nodes.push((pos.0 as u32, pos.1 as u32));
-            } else if is_key_pressed(KeyCode::C) {
-                nodes = Vec::new();
-                edges = Vec::new();
-            }
+        } else if is_mouse_button_pressed(MouseButton::Left) {
+            let pos = mouse_position();
+            nodes.push((pos.0 as u32, pos.1 as u32));
+        } else if is_key_pressed(KeyCode::C) {
+            nodes = Vec::new();
+            edges = Vec::new();
         }
 
         for node_pos in &nodes {
