@@ -39,7 +39,10 @@ async fn main() {
                 edges = Vec::new();
         } else if is_mouse_button_pressed(MouseButton::Left) {
             let pos = mouse_position();
-            nodes.push((pos.0 as u32, pos.1 as u32));
+            let pos = (pos.0 as u32, pos.1 as u32);
+            if !nodes.contains(&pos) {
+                nodes.push(pos);
+            }
         } else if is_key_pressed(KeyCode::C) {
             nodes = Vec::new();
             edges = Vec::new();
