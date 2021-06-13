@@ -36,13 +36,31 @@ async fn main() {
             nodes.push((pos.0 as u32, pos.1 as u32));
         }
         for node_pos in &nodes {
-            draw_circle(node_pos.0 as f32, node_pos.1 as f32, 8.0, Color::from_rgba(247, 244, 243, 255));
+            draw_circle(
+                node_pos.0 as f32,
+                node_pos.1 as f32,
+                8.0,
+                Color::from_rgba(247, 244, 243, 255),
+            );
         }
         for edge_pos in &edges {
-            draw_line(edge_pos.0, edge_pos.1, edge_pos.2, edge_pos.3, 2.0, Color::from_rgba(247, 244, 243, 255));
+            draw_line(
+                edge_pos.0,
+                edge_pos.1,
+                edge_pos.2,
+                edge_pos.3,
+                2.0,
+                Color::from_rgba(247, 244, 243, 255),
+            );
         }
 
-        draw_text(if start { "RUNNING" } else { "PAUSED" }, 20.0, 20.0, 30.0, DARKGRAY);
+        draw_text(
+            if start { "RUNNING" } else { "PAUSED" },
+            20.0,
+            20.0,
+            30.0,
+            DARKGRAY,
+        );
 
         next_frame().await
     }
