@@ -1,81 +1,49 @@
+use macroquad::prelude::*;
 mod aco;
 
 use aco::Colony;
-use sfml::{
-    graphics::{
-        CircleShape, Color, PrimitiveType, RenderTarget, RenderWindow, Shape, Transformable,
-        Vertex, VertexArray,
-    },
-    system::Vector2f,
-    window::{mouse, Event, Key, Style},
-};
 
-fn main() {
-    let mut window = RenderWindow::new(
-        (950, 600),
-        "Travelling Salesman",
-        Style::CLOSE,
-        &Default::default(),
-    );
-    window.set_vertical_sync_enabled(true);
+#[macroquad::main("BasicShapes")]
+async fn main() {
     let mut nodes: Vec<(u32, u32)> = Vec::new();
-    let mut circles: Vec<CircleShape> = Vec::new();
+    let mut i = 0;
     let mut start = false;
-    let mut lines = VertexArray::default();
-    lines.set_primitive_type(PrimitiveType::LINE_STRIP);
-
+    let mut colony = Colony::default(vec![(0, 0)]);
+    let mut edges: Vec<(f32, f32, f32, f32)> = Vec::new();
     loop {
-        window.clear(Color::rgb(30, 36, 38));
+        clear_background(Color::from_rgba(30, 36, 38, 255));
 
-        while let Some(event) = window.poll_event() {
-            match event {
-                Event::Closed
-                | Event::KeyPressed {
-                    code: Key::ESCAPE, ..
-                } => return,
-                Event::MouseButtonPressed { button, x, y } => match button {
-                    mouse::Button::LEFT => {
-                        let mut circ = CircleShape::default();
-                        circ.set_position((x as f32, y as f32));
-                        circ.set_origin((5., 5.));
-                        circ.set_radius(10.);
-                        circ.set_fill_color(Color::rgb(247, 244, 243));
-                        nodes.push((x as u32, y as u32));
-                        circles.push(circ);
-                    }
-                    _ => {}
-                },
-                Event::KeyPressed {
-                    code: Key::ENTER, ..
-                } => {
-                    start = true;
-                    lines = VertexArray::default();
-                    lines.set_primitive_type(PrimitiveType::LINE_STRIP);
-                }
-                _ => {}
-            }
-        }
         if start {
-            let mut colony = Colony::default(nodes.clone());
-            colony.mainloop();
-            for i in colony.shortest_path {
-                let p = nodes[i as usize];
-                lines.append(&Vertex::with_pos_color(
-                    Vector2f::new(p.0 as f32, p.1 as f32),
-                    Color::rgb(247, 244, 243),
-                ));
+            if i >= colony.iterations {
+                start = false;
+                i = 0;
+                for j in 0..colony.shortest_path.len() - 1 {
+                    let p1 = nodes[colony.shortest_path[j] as usize];
+                    let p2 = nodes[colony.shortest_path[j + 1] as usize];
+                    edges.push((p1.0 as f32, p1.1 as f32, p2.0 as f32, p2.1 as f32));
+                }
             }
-            lines.append(&Vertex::with_pos_color(
-                Vector2f::new(nodes[0].0 as f32, nodes[0].1 as f32),
-                Color::rgb(247, 244, 243),
-            ));
-            start = false;
+            colony.mainloop();
+            i += 1;
+        }
+        if is_key_pressed(KeyCode::Space) {
+            start = true;
+            colony = Colony::default(nodes.clone());
+            edges = Vec::new();
+        }
+        if !start && is_mouse_button_pressed(MouseButton::Left) {
+            let pos = mouse_position();
+            nodes.push((pos.0 as u32, pos.1 as u32));
+        }
+        for node_pos in &nodes {
+            draw_circle(node_pos.0 as f32, node_pos.1 as f32, 8.0, Color::from_rgba(247, 244, 243, 255));
+        }
+        for edge_pos in &edges {
+            draw_line(edge_pos.0, edge_pos.1, edge_pos.2, edge_pos.3, 2.0, Color::from_rgba(247, 244, 243, 255));
         }
 
-        for circ in circles.iter() {
-            window.draw(circ);
-        }
-        window.draw(&lines);
-        window.display();
+        draw_text(if start { "RUNNING" } else { "PAUSED" }, 20.0, 20.0, 30.0, DARKGRAY);
+
+        next_frame().await
     }
 }
