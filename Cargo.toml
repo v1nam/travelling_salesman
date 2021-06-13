@@ -1,7 +1,7 @@
 [package]
 name = "travelling_salesman"
 version = "0.1.0"
-authors = ["saiTama-max <vinamraj01@gmail.com>"]
+authors = ["v1nam <vinamraj01@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
