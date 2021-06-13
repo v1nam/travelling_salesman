@@ -1,4 +1,4 @@
-use rand::{seq::SliceRandom, thread_rng};
+use macroquad::rand::{ChooseRandom, gen_range};
 use std::collections::HashMap;
 
 struct Ant {
@@ -32,15 +32,15 @@ impl Ant {
             route: Vec::new(),
         }
     }
-    fn run(&mut self, rng: &mut rand::rngs::ThreadRng, nodes: &[(u32, u32)]) {
+    fn run(&mut self, nodes: &[(u32, u32)]) {
         while !self.allowed.is_empty() {
-            let next = self.decide(rng, nodes);
+            let next = self.decide(nodes);
             self.move_(next, nodes);
         }
     }
-    fn decide(&self, rng: &mut rand::rngs::ThreadRng, nodes: &[(u32, u32)]) -> u32 {
+    fn decide(&self, nodes: &[(u32, u32)]) -> u32 {
         if self.first_round {
-            return *self.allowed.choose(rng).unwrap();
+            return *self.allowed.choose().unwrap();
         }
         let mut attractiveness: HashMap<u32, f32> = HashMap::new();
         let mut total_sum = 0.0;
@@ -61,7 +61,7 @@ impl Ant {
                 *v = std::f32::MIN_POSITIVE;
             }
         }
-        let random_fl: f32 = rand::random();
+        let random_fl = gen_range(0.0, 1.0);
         let mut upto = 0.0;
 
         for location in attractiveness.keys() {
@@ -128,9 +128,8 @@ impl Colony {
         colony
     }
     pub fn mainloop(&mut self) {
-        let mut rng = thread_rng();
         for ant in self.ants.iter_mut() {
-            ant.run(&mut rng, &self.nodes);
+            ant.run(&self.nodes);
         }
         for anti in 0..self.ants.len() {
             self.populate_ant_pheromone(&anti);
