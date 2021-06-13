@@ -3,7 +3,7 @@ mod aco;
 
 use aco::Colony;
 
-#[macroquad::main("BasicShapes")]
+#[macroquad::main("Travelling Salesman")]
 async fn main() {
     let mut nodes: Vec<(u32, u32)> = Vec::new();
     let mut i = 0;
