@@ -97,7 +97,7 @@ pub struct Colony {
     beta: f32,
     pheromone_evaporation: f32,
     pheromone_value: f32,
-    iterations: u32,
+    pub iterations: u32,
     shortest_distance: f32,
     pub shortest_path: Vec<u32>,
     ants: Vec<Ant>,
@@ -129,30 +129,28 @@ impl Colony {
     }
     pub fn mainloop(&mut self) {
         let mut rng = thread_rng();
-        for _ in 0..self.iterations {
-            for ant in self.ants.iter_mut() {
-                ant.run(&mut rng, &self.nodes);
-            }
-            for anti in 0..self.ants.len() {
-                self.populate_ant_pheromone(&anti);
-                if self.shortest_distance == 0.0 {
-                    self.shortest_distance = self.ants[anti].distance_travelled;
-                }
-                if self.shortest_path.is_empty() {
-                    self.shortest_path = self.ants[anti].route.clone();
-                }
-                if self.ants[anti].distance_travelled < self.shortest_distance {
-                    self.shortest_distance = self.ants[anti].distance_travelled;
-                    self.shortest_path = self.ants[anti].route.clone();
-                }
-            }
-            self.update_pheromone();
-            if self.first_round {
-                self.first_round = false;
-            }
-            self.init_ants();
-            self.ant_pheromone_map = HashMap::new();
+        for ant in self.ants.iter_mut() {
+            ant.run(&mut rng, &self.nodes);
         }
+        for anti in 0..self.ants.len() {
+            self.populate_ant_pheromone(&anti);
+            if self.shortest_distance == 0.0 {
+                self.shortest_distance = self.ants[anti].distance_travelled;
+            }
+            if self.shortest_path.is_empty() {
+                self.shortest_path = self.ants[anti].route.clone();
+            }
+            if self.ants[anti].distance_travelled < self.shortest_distance {
+                self.shortest_distance = self.ants[anti].distance_travelled;
+                self.shortest_path = self.ants[anti].route.clone();
+            }
+        }
+        self.update_pheromone();
+        if self.first_round {
+            self.first_round = false;
+        }
+        self.init_ants();
+        self.ant_pheromone_map = HashMap::new();
     }
     fn update_pheromone(&mut self) {
         for v in self.pheromone_map.values_mut() {
