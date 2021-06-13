@@ -17,24 +17,32 @@ async fn main() {
             if i >= colony.iterations {
                 start = false;
                 i = 0;
-                for j in 0..colony.shortest_path.len() - 1 {
+                let x = colony.shortest_path.len() - 1;
+                for j in 0..x {
                     let p1 = nodes[colony.shortest_path[j] as usize];
                     let p2 = nodes[colony.shortest_path[j + 1] as usize];
                     edges.push((p1.0 as f32, p1.1 as f32, p2.0 as f32, p2.1 as f32));
                 }
+                let p1 = nodes[colony.shortest_path[x] as usize];
+                let p2 = nodes[0];
+                edges.push((p1.0 as f32, p1.1 as f32, p2.0 as f32, p2.1 as f32));
             }
             colony.mainloop();
             i += 1;
+        } else {
+            if is_key_pressed(KeyCode::Space) {
+                start = true;
+                colony = Colony::default(nodes.clone());
+                edges = Vec::new();
+            } else if is_mouse_button_pressed(MouseButton::Left) {
+                let pos = mouse_position();
+                nodes.push((pos.0 as u32, pos.1 as u32));
+            } else if is_key_pressed(KeyCode::C) {
+                nodes = Vec::new();
+                edges = Vec::new();
+            }
         }
-        if is_key_pressed(KeyCode::Space) {
-            start = true;
-            colony = Colony::default(nodes.clone());
-            edges = Vec::new();
-        }
-        if !start && is_mouse_button_pressed(MouseButton::Left) {
-            let pos = mouse_position();
-            nodes.push((pos.0 as u32, pos.1 as u32));
-        }
+
         for node_pos in &nodes {
             draw_circle(
                 node_pos.0 as f32,
@@ -59,7 +67,7 @@ async fn main() {
             20.0,
             20.0,
             30.0,
-            DARKGRAY,
+            Color::from_rgba(247, 244, 243, 180),
         );
 
         next_frame().await
