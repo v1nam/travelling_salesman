@@ -2,6 +2,7 @@
 - `left click` to add nodes
 - `space` to run
 - `C` to clear screen
+- `U`, `CTRL + Z` for removing the last node
 
 ![](screenshot.png)
 
