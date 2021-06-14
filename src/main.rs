@@ -19,10 +19,22 @@ async fn main() {
     let mut start = false;
     let mut colony = Colony::default(vec![(0, 0)]);
     let mut edges: Vec<(f32, f32, f32, f32)> = Vec::new();
+    let mut help_screen = false;
+    let help_controls = [
+        "Click to add Nodes",
+        "Press Space to Run",
+        "U / CTRL + Z to Undo",
+        "Press C to Clear Screen",
+    ];
     loop {
         clear_background(Color::from_rgba(23, 26, 32, 255));
 
-        if start {
+        if help_screen {
+            show_help(&help_controls);
+            if is_key_pressed(KeyCode::Escape) {
+                help_screen = false;
+            }
+        } else if start {
             if !colony.shortest_path.is_empty() {
                 edges = Vec::new();
                 let x = colony.shortest_path.len() - 1;
@@ -62,51 +74,88 @@ async fn main() {
             if !nodes.is_empty() {
                 nodes.pop();
             }
+        } else if is_key_pressed(KeyCode::H) {
+            help_screen = true;
         }
 
-        for node_pos in &nodes {
-            draw_circle(
-                node_pos.0 as f32,
-                node_pos.1 as f32,
-                8.0,
-                Color::from_rgba(216, 222, 233, 255),
+        if !help_screen {
+            for node_pos in &nodes {
+                draw_circle(
+                    node_pos.0 as f32,
+                    node_pos.1 as f32,
+                    8.0,
+                    Color::from_rgba(216, 222, 233, 255),
+                );
+            }
+            for edge_pos in &edges {
+                draw_line(
+                    edge_pos.0,
+                    edge_pos.1,
+                    edge_pos.2,
+                    edge_pos.3,
+                    2.0,
+                    Color::from_rgba(216, 222, 233, 255),
+                );
+            }
+
+            draw_text(
+                if start { "RUNNING" } else { "PAUSED" },
+                10.0,
+                20.0,
+                25.0,
+                Color::from_rgba(216, 222, 233, 180),
+            );
+
+            draw_text(
+                &format!("Shortest Distance: {}px", colony.shortest_distance as u32),
+                10.0,
+                50.0,
+                25.0,
+                Color::from_rgba(216, 222, 233, 180),
+            );
+
+            draw_text(
+                &format!("Nodes: {}", nodes.len()),
+                10.0,
+                80.0,
+                25.0,
+                Color::from_rgba(216, 222, 233, 180),
+            );
+
+            draw_text(
+                "H for help",
+                screen_width() - 135.0,
+                20.0,
+                25.0,
+                Color::from_rgba(216, 222, 233, 180),
             );
         }
-        for edge_pos in &edges {
-            draw_line(
-                edge_pos.0,
-                edge_pos.1,
-                edge_pos.2,
-                edge_pos.3,
-                2.0,
-                Color::from_rgba(216, 222, 233, 255),
-            );
-        }
-
-        draw_text(
-            if start { "RUNNING" } else { "PAUSED" },
-            10.0,
-            20.0,
-            25.0,
-            Color::from_rgba(216, 222, 233, 180),
-        );
-
-        draw_text(
-            &format!("Shortest Distance: {}px", colony.shortest_distance as u32),
-            10.0,
-            50.0,
-            25.0,
-            Color::from_rgba(216, 222, 233, 180),
-        );
-
-        draw_text(
-            &format!("Nodes: {}", nodes.len()),
-            10.0,
-            80.0,
-            25.0,
-            Color::from_rgba(216, 222, 233, 180),
-        );
-
         next_frame().await
+    }
+}
+
+fn show_help(help_controls: &[&'static str]) {
+    draw_text(
+        "ESC to go back",
+        10.0,
+        20.0,
+        25.0,
+        Color::from_rgba(216, 222, 233, 180),
+    );
+    draw_text(
+        "HELP",
+        (screen_width() / 2.0) - 4.0 * 22.0 / 2.0,
+        100.0,
+        44.0,
+        Color::from_rgba(216, 222, 233, 180),
+    );
+    for (i, text) in help_controls.iter().enumerate() {
+        draw_text(
+            text,
+            (screen_width() / 2.0) - (text.len() as f32 * 15.0 / 2.0),
+            (screen_height() / 2.0) - (60.0 - (30.0 * i as f32)),
+            30.0,
+            Color::from_rgba(216, 222, 233, 180),
+        );
     }
 }
