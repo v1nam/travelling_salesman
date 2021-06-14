@@ -1,4 +1,4 @@
-use macroquad::rand::{ChooseRandom, gen_range};
+use macroquad::rand::{gen_range, ChooseRandom};
 use std::collections::HashMap;
 
 struct Ant {
