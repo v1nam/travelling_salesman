@@ -4,7 +4,6 @@
 - `C` to clear screen
 - `U`, `CTRL + Z` for removing the last node  
 
-[Run the simulation here](https://v1nam.me/tsp)
 
 ![](screenshot.png)
 
